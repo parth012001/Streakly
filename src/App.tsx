@@ -23,6 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 interface Habit {
   id: number;
@@ -243,113 +244,115 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Navbar />
-      <main className="max-w-3xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
-            Good Morning, Parth <span className="wave">👋</span>
-          </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Track your daily habits and build a better routine
-          </p>
-        </div>
-        
-        <div className="mb-8">
-          <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Categories</h2>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={`
-                px-4 py-2 rounded-lg text-sm font-medium
-                transition-all duration-200
-                ${!selectedCategory 
-                  ? 'bg-gray-800 dark:bg-white text-white dark:text-gray-900 shadow-lg' 
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}
-              `}
-            >
-              All Habits
-            </button>
-            {categories.map(category => (
-              <CategoryTag
-                key={category.id}
-                category={category}
-                selected={selectedCategory === category.id}
-                onClick={() => setSelectedCategory(
-                  selectedCategory === category.id ? null : category.id
-                )}
-              />
-            ))}
+    <ThemeProvider>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+        <Navbar />
+        <main className="max-w-3xl mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
+              Good Morning, Parth <span className="wave">👋</span>
+            </h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Track your daily habits and build a better routine
+            </p>
           </div>
-        </div>
-
-        <div className="mt-8">
-          <DndContext 
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext 
-              items={filteredHabits}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-4">
-                {filteredHabits.map((habit) => (
-                  <SortableHabitCard
-                    key={habit.id}
-                    habit={habit}
-                    onToggle={() => toggleHabit(habit.id)}
-                    onDelete={() => deleteHabit(habit.id)}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-
-          {filteredHabits.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                {selectedCategory 
-                  ? "No habits in this category yet"
-                  : "No habits added yet"}
-              </p>
+          
+          <div className="mb-8">
+            <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Categories</h2>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={`
+                  px-4 py-2 rounded-lg text-sm font-medium
+                  transition-all duration-200
+                  ${!selectedCategory 
+                    ? 'bg-gray-800 dark:bg-white text-white dark:text-gray-900 shadow-lg' 
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}
+                `}
+              >
+                All Habits
+              </button>
+              {categories.map(category => (
+                <CategoryTag
+                  key={category.id}
+                  category={category}
+                  selected={selectedCategory === category.id}
+                  onClick={() => setSelectedCategory(
+                    selectedCategory === category.id ? null : category.id
+                  )}
+                />
+              ))}
             </div>
-          )}
-        </div>
+          </div>
 
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          aria-label="Add new habit"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <div className="mt-8">
+            <DndContext 
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext 
+                items={filteredHabits}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-4">
+                  {filteredHabits.map((habit) => (
+                    <SortableHabitCard
+                      key={habit.id}
+                      habit={habit}
+                      onToggle={() => toggleHabit(habit.id)}
+                      onDelete={() => deleteHabit(habit.id)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+
+            {filteredHabits.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">
+                  {selectedCategory 
+                    ? "No habits in this category yet"
+                    : "No habits added yet"}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label="Add new habit"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-        </button>
-      </main>
-      
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}>
-        <AddHabitForm
-          onSubmit={handleAddHabit}
-          onClose={() => setIsAddModalOpen(false)}
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+          </button>
+        </main>
+        
+        <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}>
+          <AddHabitForm
+            onSubmit={handleAddHabit}
+            onClose={() => setIsAddModalOpen(false)}
+          />
+        </Modal>
+        
+        <StreakCelebration 
+          streak={celebration.streak}
+          isVisible={celebration.isVisible}
         />
-      </Modal>
-      
-      <StreakCelebration 
-        streak={celebration.streak}
-        isVisible={celebration.isVisible}
-      />
-    </div>
+      </div>
+    </ThemeProvider>
   );
 };
 
